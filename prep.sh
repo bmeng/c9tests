@@ -5,8 +5,6 @@
 # This script may be run multiple times, make it idempotent.
 #
 
-set -e
-
 source /etc/openshift/node.conf
 
 # Switching to ephemeral storage for speed and space
@@ -114,10 +112,12 @@ sed -i \
 
 # Disable unneeded services and restart ones we've reconfigured
 service rhc-broker stop ; chkconfig rhc-broker off
+service rhc-site stop ; chkconfig rhc-site off
 service mcollective stop ; chkconfig mcollective off
 service libra-watchman stop ; chkconfig libra-watchman off
 service activemq stop; chkconfig activemq off
 service mongod stop; chkconfig mongod off
+service jenkins stop; chkconfig jenkins off
 chkconfig openshift-gears off
 service openshift-cgroups restart
 service httpd restart
