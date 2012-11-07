@@ -12,6 +12,10 @@ will bypass the broker and mcollective entirely.
 
 An m1.xlarge or larger is required to run these tests.
 
+Note: The httpd configuration was rewritten to make its footprint
+smaller; but it will still try to consume 6GB or more when all the
+gears are created.
+
 
 * __prep.sh__
 
