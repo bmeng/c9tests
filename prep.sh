@@ -118,6 +118,7 @@ service libra-watchman stop ; chkconfig libra-watchman off
 service activemq stop; chkconfig activemq off
 service mongod stop; chkconfig mongod off
 service jenkins stop; chkconfig jenkins off
+service oddjobd stop; chkconfig oddjobd off
 chkconfig openshift-gears off
 service openshift-cgroups restart
 service httpd restart
