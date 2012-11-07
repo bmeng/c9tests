@@ -16,6 +16,9 @@ Note: The httpd configuration was rewritten to make its footprint
 smaller; but it will still try to consume 6GB or more when all the
 gears are created.
 
+Note: After prep.sh is run; the instance can no longer run other kinds
+of tests.
+
 
 * __prep.sh__
 
