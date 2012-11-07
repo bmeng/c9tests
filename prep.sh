@@ -112,9 +112,11 @@ sed -i \
     -e 's|^MaxRequestsPerChild .*$|MaxRequestsPerChild 400|' \
     /etc/httpd/conf/httpd.conf
 
-# Restart everything, keep this last
-service rhc-broker restart
-service mcollective restart
+# Disable unneeded services and restart ones we've reconfigured
+service rhc-broker stop ; chkconfig rhc-broker off
+service mcollective stop ; chkconfig mcollective off
+service libra-watchman stop ; chkconfig libra-watchman off
+chkconfig openshift-gears off
 service openshift-cgroups restart
 service httpd restart
 
