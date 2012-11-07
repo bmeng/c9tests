@@ -119,6 +119,8 @@ service activemq stop; chkconfig activemq off
 service mongod stop; chkconfig mongod off
 service jenkins stop; chkconfig jenkins off
 service oddjobd stop; chkconfig oddjobd off
+service mysqld stop; chkconfig mysqld off
+service cups stop; chkconfig cups off
 chkconfig openshift-gears off
 service openshift-cgroups restart
 service httpd restart
