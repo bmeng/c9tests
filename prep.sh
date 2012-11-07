@@ -70,6 +70,12 @@ then
     restorecon -r /var/lib/openshift
     setenforce 1
     quotaon -u /var/lib/openshift
+
+    # And we need a big swap
+    dd if=/dev/zero of=/var/lib/openshift/.swapfile bs=1024k count=8192
+    restorecon /var/lib/openshift/.swapfile
+    mkswap /var/lib/openshift/.swapfile
+    swapon /var/lib/openshift/.swapfile
 fi
 
 # We're creating thousands of directories already.
@@ -88,6 +94,7 @@ rm -f /etc/cron.*/openshift-origin-cron-*
 rm -f /etc/cron.daily/openshift_tmpwatch.sh 
 rm -f /etc/cron.daily/mlocate.cron
 rm -f /etc/cron.hourly/charlie 
+rm -f ./cron.minutely/openshift-facts
 crontab -u root -r || :
 service crond reload
 
@@ -98,11 +105,11 @@ ln -sf resource_limits.conf.c9 /etc/openshift/resource_limits.conf
 # Shrink down httpd configuration so that its not a hog
 sed -i \
     -e 's|^StartServers .*$|StartServers 1|' \
-    -e 's|MinSpareServers .*$|MinSpareServers 1|' \
-    -e 's|MaxSpareServers .*$|MaxSpareServers 2|' \
-    -e 's|ServerLimit .*$|ServerLimit 25|' \
-    -e 's|MaxClients .*$|MaxClients 25|' \
-    -e 's|MaxRequestsPerChild .*$|MaxRequestsPerChild 400|' \
+    -e 's|^MinSpareServers .*$|MinSpareServers 1|' \
+    -e 's|^MaxSpareServers .*$|MaxSpareServers 1|' \
+    -e 's|^ServerLimit .*$|ServerLimit 1|' \
+    -e 's|^MaxClients .*$|MaxClients 1|' \
+    -e 's|^MaxRequestsPerChild .*$|MaxRequestsPerChild 400|' \
     /etc/httpd/conf/httpd.conf
 
 # Restart everything, keep this last
