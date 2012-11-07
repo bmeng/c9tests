@@ -50,6 +50,9 @@ do
         runuser --shell /bin/bash "$last_uuid" -c "runcon -u system_u -r system_r -t openshift_t -l $last_mcs test -e /tmp/$uuid"
         [ $? -eq 0 ] && echo "ERROR: Polydir is not isolated: $uuid"
 
+        # Test 6: cgroups
+        [ -e /cgroups/all/openshift/"$uuid" ] || echo "ERROR: No cgroups for: $uuid"
+
         last_uuid="$uuid"
         last_uid="$uid"
     )
