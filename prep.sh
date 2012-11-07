@@ -116,6 +116,8 @@ sed -i \
 service rhc-broker stop ; chkconfig rhc-broker off
 service mcollective stop ; chkconfig mcollective off
 service libra-watchman stop ; chkconfig libra-watchman off
+service activemq stop; chkconfig activemq off
+service mongod stop; chkconfig mongod off
 chkconfig openshift-gears off
 service openshift-cgroups restart
 service httpd restart
