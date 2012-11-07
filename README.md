@@ -10,6 +10,8 @@ A subset of the functionality to create 15k applications is being
 handled by US3050.  Tests require some node modifications to work and
 will bypass the broker and mcollective entirely.
 
+An m1.xlarge or larger is required to run these tests.
+
 
 * __prep.sh__
 
