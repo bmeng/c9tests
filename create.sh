@@ -28,25 +28,26 @@ do
         
         $RC ${DIY}/configure "$name" "$domain" "$uuid"
         
-        $RC ${DIY}/stop  "$name" "$domain" "$uuid"
+        $RC ${DIY}/stop "$name" "$domain" "$uuid"
     ) &
 
-    m=$(( $i % 25 ))
+    m=$(( $i % 50 ))
     if [ $m -eq 0 ]
     then
         wait
-        sleep 10
-        service httpd stop
-        sleep 5
-        pkill -u apache
-        rm -f /var/log/httpd/*
-        while ! ( service httpd start )
-        do
-            sleep 5
-            pkill -u apache
-        done
         [ -e STOP ] && exit
     fi
 
     i=$(( $i + 1 ))
+done
+
+sleep 10
+service httpd stop
+sleep 5
+pkill -u apache
+rm -f /var/log/httpd/*
+while ! ( service httpd start )
+do
+    sleep 5
+    pkill -u apache
 done

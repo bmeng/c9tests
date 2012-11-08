@@ -110,6 +110,11 @@ sed -i \
     -e 's|^MaxRequestsPerChild .*$|MaxRequestsPerChild 400|' \
     /etc/httpd/conf/httpd.conf
 
+# Its just too expensive to restart Apache 15k times.  Restart it by hand yourself.
+sf="/usr/libexec/openshift/cartridges/abstract/info/bin/httpd_singular"
+[ -e "${sf}.real" ] || ln "${sf}" "${sf}.real"
+ln -f "/bin/true" "${sf}" 
+
 # Disable unneeded services and restart ones we've reconfigured
 service rhc-broker stop ; chkconfig rhc-broker off
 service rhc-site stop ; chkconfig rhc-site off
