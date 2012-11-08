@@ -21,6 +21,8 @@ do
     uuid=`echo "${name}-${domain}" | md5sum - | awk '{ print $1 }'`
     
     (
+        [ -e /var/lib/openshift/$uuid ] && exit
+
         $RC oo-app-create -a "$uuid" -c "$uuid" \
             --with-app-name "$name" \
             --with-namespace "$domain" \
