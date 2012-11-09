@@ -9,8 +9,6 @@ grep ":${GEAR_GECOS}:" /etc/passwd | cut -f 1,3 -d : | tr : ' ' | \
     while read uuid uid
 do
     (
-        echo "Checking: $uuid"
-
         source  ${GEAR_BASE_DIR}/${uuid}/.env/OPENSHIFT_INTERNAL_IP
         
         mcs=`oo-get-mcs-level $uid`
@@ -53,7 +51,15 @@ do
         # Test 6: cgroups
         [ -e /cgroups/all/openshift/"$uuid" ] || echo "ERROR: No cgroups for: $uuid"
 
-        last_uuid="$uuid"
-        last_uid="$uid"
-    )
+    ) &
+
+    m=$(( $uid % 25 ))
+    if [ $m -eq 0 ]
+    then
+        wait
+        [ -e STOP ] && exit
+    fi
+
+    last_uuid="$uuid"
+    last_uid="$uid"
 done
