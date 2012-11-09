@@ -36,7 +36,7 @@ do
         nc -l $OPENSHIFT_INTERNAL_IP 8080 </dev/null &>/dev/null &
         sleep 1
         runuser --shell /bin/bash "$last_uuid" -c "runcon -u system_u -r system_r -t openshift_t -l $last_mcs nc $OPENSHIFT_INTERNAL_IP 8080 </dev/null &>/dev/null"
-        [ $? -eq 0 ] || echo "ERROR: Can connect to the wrong address: $uuid"
+        [ $? -eq 0 ] && echo "ERROR: Can connect to the wrong address: $uuid"
         
         # Test 5: polydir works
         runuser --shell /bin/bash "$uuid" -c "runcon -u system_u -r system_r -t openshift_t -l $mcs touch /tmp/$uuid"
@@ -49,7 +49,7 @@ do
         [ $? -eq 0 ] && echo "ERROR: Polydir is not isolated: $uuid"
 
         # Test 6: cgroups
-        [ -e /cgroups/all/openshift/"$uuid" ] || echo "ERROR: No cgroups for: $uuid"
+        [ -e /cgroup/all/openshift/"$uuid" ] || echo "ERROR: No cgroups for: $uuid"
 
     ) &
 
