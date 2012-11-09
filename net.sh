@@ -31,13 +31,15 @@ do
         sleep 1
         runuser --shell /bin/bash "$uuid" -c "runcon -u system_u -r system_r -t openshift_t -l $mcs nc $OPENSHIFT_INTERNAL_IP 8080 </dev/null &>/dev/null"
         [ $? -eq 0 ] || echo "ERROR: Cannot connect to the right address: $uuid"
+        nc $OPENSHIFT_INTERNAL_IP 8080 </dev/null &>/dev/null
         
         # Test 4: Cannot connect to the wrong address
         nc -l $OPENSHIFT_INTERNAL_IP 8080 </dev/null &>/dev/null &
         sleep 1
         runuser --shell /bin/bash "$last_uuid" -c "runcon -u system_u -r system_r -t openshift_t -l $last_mcs nc $OPENSHIFT_INTERNAL_IP 8080 </dev/null &>/dev/null"
         [ $? -eq 0 ] && echo "ERROR: Can connect to the wrong address: $uuid"
-        
+        nc $OPENSHIFT_INTERNAL_IP 8080 </dev/null &>/dev/null
+
         # Test 5: polydir works
         runuser --shell /bin/bash "$uuid" -c "runcon -u system_u -r system_r -t openshift_t -l $mcs touch /tmp/$uuid"
         runuser --shell /bin/bash "$uuid" -c "runcon -u system_u -r system_r -t openshift_t -l $mcs test -e /tmp/$uuid"
