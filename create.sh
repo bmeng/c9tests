@@ -1,7 +1,7 @@
 #!/bin/bash
 
 STARTGEARS=1
-MAXGEARS=16000
+MAXGEARS=15500
 
 if [ "$1" ]; then
     if [ "$1" -le 0 ]; then
