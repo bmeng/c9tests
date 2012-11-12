@@ -65,3 +65,4 @@ do
     last_uuid="$uuid"
     last_uid="$uid"
 done
+wait

@@ -42,6 +42,7 @@ do
 
     i=$(( $i + 1 ))
 done
+wait
 
 sleep 10
 service httpd stop
