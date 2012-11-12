@@ -48,3 +48,9 @@ of tests.
 
   Not normally used in testing.  Remove extraneous gears.
 
+* __startall.sh__
+
+  Not normally used in testing.  Start all gears.  Its a complete
+  stunt, and a bad idea.  Really, don't do this.
+
+
