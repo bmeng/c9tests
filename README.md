@@ -43,3 +43,8 @@ of tests.
 
   Verify that the IPTables and SELinux restrictions work properly for
   every gear.  Also test polyinstantiation.
+
+* __toomany.sh__
+
+  Not normally used in testing.  Remove extraneous gears.
+

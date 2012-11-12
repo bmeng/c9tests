@@ -130,5 +130,5 @@ chkconfig openshift-gears off
 service openshift-cgroups restart
 service httpd restart
 
-# This should pass
-rhc-accept-node
+# This should no longer pass
+# rhc-accept-node
