@@ -53,16 +53,9 @@ do
         # Test 6: cgroups
         [ -e /cgroup/all/openshift/"$uuid" ] || echo "ERROR: No cgroups for: $uuid"
 
-    ) &
-
-    m=$(( $uid % 25 ))
-    if [ $m -eq 0 ]
-    then
-        wait
-        [ -e STOP ] && exit
-    fi
+    )
+    [ -e STOP ] && exit
 
     last_uuid="$uuid"
     last_uid="$uid"
 done
-wait
