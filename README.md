@@ -46,11 +46,10 @@ of tests.
 
 * __toomany.sh__
 
-  Not normally used in testing.  Remove extraneous gears.
+  Not normally used in testing.  Remove extraneous gears (UID > 16000)
 
 * __startall.sh__
 
   Not normally used in testing.  Start all gears.  Its a complete
-  stunt, and a bad idea.  Really, don't do this.
-
-
+  stunt, and a bad idea.  Do this on an m4.4xlarge.  Don't do this on
+  an instance type any smaller.
