@@ -1,0 +1,16 @@
+#!/usr/bin/env oo-ruby
+# -*- ruby -*-
+
+require 'rubygems'
+require 'openshift-origin-common'
+require 'openshift-origin-node'
+
+config = OpenShift::Config.new
+domain = config.get("CLOUD_DOMAIN")
+
+File.open("/etc/hosts", File::RDWR) do |f|
+  f.seek(0, IO::SEEK_END)
+  (1000...20000).each do |idx|
+    f.write("127.0.0.1    foo#{idx}-bar#{idx}.#{domain}\n")
+  end
+end

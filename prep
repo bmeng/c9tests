@@ -27,6 +27,9 @@ then
         ) || :
     done
 
+    # Backup Apache route files
+    ( cd /var/lib/openshift/.httpd.d; tar -czf /root/apache.routes.tgz *.json *.txt *.db )
+
     # Disable quotas on /var
     quotaoff -ug /var
     rm -f /var/aquota.user
@@ -63,6 +66,11 @@ then
     echo 'LABEL=openshift /var/lib/openshift ext4 defaults,usrjquota=aquota.user,jqfmt=vfsv0 1 1' >> /etc/fstab
     mount -a
     mkdir -m 750 /var/lib/openshift/.httpd.d/
+    chown root:apache /var/lib/openshift/.httpd.d/
+
+    # Restore Apache route files
+    ( cd /var/lib/openshift/.httpd.d; tar -xzf /root/apache.routes.tgz )
+
     setenforce 0
     quotacheck -cmuf /var/lib/openshift
     restorecon -r /var/lib/openshift
@@ -72,7 +80,7 @@ then
     # And we need a big swap
     dd if=/dev/zero of=/var/lib/openshift/.swapfile bs=1024k count=8192
     restorecon /var/lib/openshift/.swapfile
-    mkswap /var/lib/openshift/.swapfile
+    mkswap -f /var/lib/openshift/.swapfile
     swapon /var/lib/openshift/.swapfile
 fi
 
@@ -100,21 +108,6 @@ service crond reload
 rm -f /etc/openshift/resource_limits.conf
 ln -sf resource_limits.conf.c9 /etc/openshift/resource_limits.conf
 
-# Shrink down httpd configuration so that its not a hog
-sed -i \
-    -e 's|^StartServers .*$|StartServers 1|' \
-    -e 's|^MinSpareServers .*$|MinSpareServers 1|' \
-    -e 's|^MaxSpareServers .*$|MaxSpareServers 1|' \
-    -e 's|^ServerLimit .*$|ServerLimit 1|' \
-    -e 's|^MaxClients .*$|MaxClients 1|' \
-    -e 's|^MaxRequestsPerChild .*$|MaxRequestsPerChild 400|' \
-    /etc/httpd/conf/httpd.conf
-
-# Its just too expensive to restart Apache 15k times.  Restart it by hand yourself.
-sf="/usr/libexec/openshift/cartridges/abstract/info/bin/httpd_singular"
-[ -e "${sf}.real" ] || ln "${sf}" "${sf}.real"
-ln -f "/bin/true" "${sf}" 
-
 # Disable unneeded services and restart ones we've reconfigured
 service rhc-broker stop ; chkconfig rhc-broker off
 service rhc-site stop ; chkconfig rhc-site off
@@ -129,6 +122,6 @@ service cups stop; chkconfig cups off
 chkconfig openshift-gears off
 service openshift-cgroups restart
 service httpd restart
+service openshift-node-web-proxy restart
+service openshift-port-proxy restart
 
-# This should no longer pass
-# rhc-accept-node

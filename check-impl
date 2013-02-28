@@ -1,0 +1,60 @@
+#!/usr/bin/env oo-ruby
+# -*- ruby -*-
+
+require 'rubygems'
+require 'openshift-origin-common'
+require 'openshift-origin-node'
+require 'systemu'
+require 'digest/md5'
+require 'net/http'
+require 'uri'
+
+config = OpenShift::Config.new
+domain = config.get("CLOUD_DOMAIN")
+
+cart = "diy-0.1"
+hook_dir = File.join(config.get("CARTRIDGE_BASE_PATH"), cart, "info/hooks")
+
+apprange = [(1000...1020).to_a, (19980...20000).to_a].flatten
+apps = apprange.map { |idx|
+  { :name => "foo#{idx}",
+    :namespace => "bar#{idx}",
+    :uid => idx,
+    :uuid => Digest::MD5.hexdigest("foo#{idx}-bar#{idx}").to_s,
+    :fqdn => "foo#{idx}-bar#{idx}.#{domain}" }
+}
+
+# Start apps first to allow them to settle
+apps.each do |app|
+  puts "Starting: #{app[:uuid]}"
+  hook = File.join(hook_dir, 'start')
+  cmd = "#{hook} #{app[:name]} #{app[:namespace]} #{app[:uuid]}"
+  rc, out, err = systemu cmd
+  if rc != 0
+    $stderr.puts "ERROR: #{cmd} = #{rc} #{out} #{err}"
+  end
+end
+
+# Check apps
+apps.each do |app|
+  puts "Checking: app[:uuid] -> app[:fqdn]"
+  uri = URI.parse("http://#{app[:fqdn]}/")
+  Net::HTTP.start(uri.host, uri.port) do |http|
+    request = Net::HTTP::Get.new uri.request_uri
+    response = http.request request
+    if response.code.to_i >=300
+      $stderr.puts "Error: http://#{app[:fqdn]}/ => #{response.code}"
+    end
+  end
+end
+
+# Finally, stop apps
+apps.each do |app|
+  puts "Stopping: #{app[:uuid]}"
+  hook = File.join(hook_dir, 'stop')
+  cmd = "#{hook} #{app[:name]} #{app[:namespace]} #{app[:uuid]}"
+  rc, out, err = systemu cmd
+  if rc != 0
+    $stderr.puts "ERROR: #{cmd} = #{rc} #{out} #{err}"
+  end
+end
