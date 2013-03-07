@@ -7,10 +7,14 @@ require 'openshift-origin-node'
 require 'systemu'
 require 'digest/md5'
 
+MAXCHLD = 5
+
 config = OpenShift::Config.new
 
 cart = "diy-0.1"
 hook_dir = File.join(config.get("CARTRIDGE_BASE_PATH"), cart, "info/hooks")
+
+nchld = 0
 
 (1000...20000).each do |idx|
 
@@ -23,27 +27,37 @@ hook_dir = File.join(config.get("CARTRIDGE_BASE_PATH"), cart, "info/hooks")
 
   next if File.exists?(File.join(config.get("GEAR_BASE_DIR"), uuid))
 
-  begin
-    container = OpenShift::ApplicationContainer.new(uuid, uuid, uid,
+  fork {
+    begin
+      container = OpenShift::ApplicationContainer.new(uuid, uuid, uid,
                                                     name, name, namespace)
-    container.create
+      container.create
 
-    hook = File.join(hook_dir, 'configure')
-    cmd = "#{hook} #{name} #{namespace} #{uuid}"
-    rc, out, err = systemu cmd
-    if rc != 0
-      raise Exception.new("#{cmd} = #{rc} #{out} #{err}")
-    end
+      hook = File.join(hook_dir, 'configure')
+      cmd = "#{hook} #{name} #{namespace} #{uuid}"
+      rc, out, err = systemu cmd
+      if rc != 0
+        raise Exception.new("#{cmd} = #{rc} #{out} #{err}")
+      end
 
-    hook = File.join(hook_dir, 'stop')
-    cmd = "#{hook} #{name} #{namespace} #{uuid}"
-    rc, out, err = systemu cmd
-    if rc != 0
-      raise Exception.new("#{cmd} = #{rc} #{out} #{err}")
+      hook = File.join(hook_dir, 'stop')
+      cmd = "#{hook} #{name} #{namespace} #{uuid}"
+      rc, out, err = systemu cmd
+      if rc != 0
+        raise Exception.new("#{cmd} = #{rc} #{out} #{err}")
+      end
+
+    rescue => e
+      $stderr.write("Exception: #{e.inspect}\n")
     end
-    
-  rescue => e
-    $stderr.write("Exception: #{e.inspect}\n")
+  }
+  nchld = nchld + 1
+  if nchld >= MAXCHLD
+    begin
+      Process.wait
+    rescue Errno::ECHILD
+    end
+    nchld = nchld -1
   end
 
 end
