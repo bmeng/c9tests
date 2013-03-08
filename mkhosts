@@ -10,7 +10,7 @@ domain = config.get("CLOUD_DOMAIN")
 
 File.open("/etc/hosts", File::RDWR) do |f|
   f.seek(0, IO::SEEK_END)
-  (1000...20000).each do |idx|
+  (1000...16000).each do |idx|
     f.write("127.0.0.1    foo#{idx}-bar#{idx}.#{domain}\n")
   end
 end

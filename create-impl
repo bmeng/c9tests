@@ -4,7 +4,6 @@
 require 'rubygems'
 require 'openshift-origin-common'
 require 'openshift-origin-node'
-require 'systemu'
 require 'digest/md5'
 
 MAXCHLD = 5
@@ -16,7 +15,9 @@ hook_dir = File.join(config.get("CARTRIDGE_BASE_PATH"), cart, "info/hooks")
 
 nchld = 0
 
-(1000...20000).each do |idx|
+srand
+
+(1000...16000).each do |idx|
 
   name = "foo#{idx}"
   namespace = "bar#{idx}"
@@ -28,6 +29,8 @@ nchld = 0
   next if File.exists?(File.join(config.get("GEAR_BASE_DIR"), uuid))
 
   fork {
+    sleep(rand)
+
     begin
       container = OpenShift::ApplicationContainer.new(uuid, uuid, uid,
                                                     name, name, namespace)
@@ -35,14 +38,14 @@ nchld = 0
 
       hook = File.join(hook_dir, 'configure')
       cmd = "#{hook} #{name} #{namespace} #{uuid}"
-      rc, out, err = systemu cmd
+      out, err, rc = OpenShift::Utils::oo_spawn cmd
       if rc != 0
         raise Exception.new("#{cmd} = #{rc} #{out} #{err}")
       end
 
       hook = File.join(hook_dir, 'stop')
       cmd = "#{hook} #{name} #{namespace} #{uuid}"
-      rc, out, err = systemu cmd
+      out, err, rc = OpenShift::Utils::oo_spawn cmd
       if rc != 0
         raise Exception.new("#{cmd} = #{rc} #{out} #{err}")
       end

@@ -37,7 +37,7 @@ check
 * __create__
 
   Create 15k gears directly on the node without using the broker or
-  DNS.  This will actually create 20000 gears.
+  DNS.
 
 * __create-impl__
 
@@ -50,3 +50,11 @@ check
 * __check-impl__
 
   Called by check to do its work.
+
+* __mkapp.sh__
+
+  Make a test app for demo.
+
+* __noapp.sh__
+
+  Delete the test app for demo.
