@@ -6,7 +6,7 @@ require 'openshift-origin-common'
 require 'openshift-origin-node'
 require 'digest/md5'
 
-MAXCHLD = 5
+MAXCHLD = 8
 
 config = OpenShift::Config.new
 
