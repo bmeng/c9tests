@@ -15,7 +15,7 @@ domain = config.get("CLOUD_DOMAIN")
 cart = "diy-0.1"
 hook_dir = File.join(config.get("CARTRIDGE_BASE_PATH"), cart, "info/hooks")
 
-apprange = [(1000...1020).to_a, (15980...16000).to_a].flatten
+apprange = [(1000...1049).to_a, (15951...16000).to_a].flatten
 apps = apprange.map { |idx|
   { :name => "foo#{idx}",
     :namespace => "bar#{idx}",
