@@ -64,7 +64,7 @@ end
 
 apps_to_check,each do |app|
   if app[:response] >=300
-    $stderr.puts "Error: http://#{app[:fqdn]}/ => #{response.code}"
+    $stderr.puts "Error: http://#{app[:fqdn]}/ => #{app[:response]}"
   end
 end
 
