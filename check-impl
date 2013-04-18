@@ -62,7 +62,7 @@ apps_to_check = apps.clone
   end
 end
 
-apps_to_check,each do |app|
+apps_to_check.each do |app|
   if app[:response] >=300
     $stderr.puts "Error: http://#{app[:fqdn]}/ => #{app[:response]}"
   end
