@@ -58,14 +58,22 @@ apps_to_check = apps.clone
       request = Net::HTTP::Get.new uri.request_uri
       response = http.request request
       app[:response] = response.code.to_i
+      if app[:response] <300
+        apps_to_check.delete(app)
+      end
     end
   end
+  break if apps_to_check.empty?
 end
 
 apps_to_check.each do |app|
   if app[:response] >=300
     $stderr.puts "Error: http://#{app[:fqdn]}/ => #{app[:response]}"
   end
+end
+
+if "ARGV[0]" == "dontstop"
+  exit 0
 end
 
 # Finally, stop apps
