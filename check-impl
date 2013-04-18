@@ -15,6 +15,15 @@ domain = config.get("CLOUD_DOMAIN")
 cart = "diy-0.1"
 hook_dir = File.join(config.get("CARTRIDGE_BASE_PATH"), cart, "info/hooks")
 
+def collect_children
+  begin
+    while true
+      Process.wait2
+    end
+  rescue Errno::ECHILD
+  end
+end
+
 apprange = [(1050...1099).to_a, (15901...15950).to_a].flatten
 apps = apprange.map { |idx|
   { :name => "foo#{idx}",
@@ -37,23 +46,25 @@ apps.each do |app|
   end
 end
 
-begin
-  while true
-    Process.wait2
-  end
-rescue Errno::ECHILD
-end
+collect_children
 
 # Check apps
-apps.each do |app|
-  puts "Checking: app[:uuid] -> app[:fqdn]"
-  uri = URI.parse("http://#{app[:fqdn]}/")
-  Net::HTTP.start(uri.host, uri.port) do |http|
-    request = Net::HTTP::Get.new uri.request_uri
-    response = http.request request
-    if response.code.to_i >=300
-      $stderr.puts "Error: http://#{app[:fqdn]}/ => #{response.code}"
+apps_to_check = apps.clone
+50.times.each do
+  apps_to_check.clone.each do |app|
+    puts "Checking: '#{app[:uuid]} -> #{app[:fqdn]}"
+    uri = URI.parse("http://#{app[:fqdn]}/")
+    Net::HTTP.start(uri.host, uri.port) do |http|
+      request = Net::HTTP::Get.new uri.request_uri
+      response = http.request request
+      app[:response] = response.code.to_i
     end
+  end
+end
+
+apps_to_check,each do |app|
+  if app[:response] >=300
+    $stderr.puts "Error: http://#{app[:fqdn]}/ => #{response.code}"
   end
 end
 
@@ -70,9 +81,4 @@ apps.each do |app|
   end
 end
 
-begin
-  while true
-    Process.wait2
-  end
-rescue Errno::ECHILD
-end
+collect_children
