@@ -33,7 +33,7 @@ apps = apprange.map { |idx|
     :fqdn => "foo#{idx}-bar#{idx}.#{domain}" }
 }
 
-if not ARG.include?('dontstart')
+if not ARGV.include?('dontstart')
   # Start apps first to allow them to settle
   apps.each do |app|
     Process.fork do
@@ -49,7 +49,7 @@ if not ARG.include?('dontstart')
   collect_children
 end
 
-if not ARG.include?('dontcheck')
+if not ARGV.include?('dontcheck')
   # Check apps
   apps_to_check = apps.clone
   50.times.each do
@@ -75,7 +75,7 @@ if not ARG.include?('dontcheck')
 end
 
 
-if not ARG.include?("dontstop")
+if not ARGV.include?("dontstop")
   # Finally, stop apps
   apps.each do |app|
     Process.fork do
