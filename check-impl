@@ -26,13 +26,22 @@ apps = apprange.map { |idx|
 
 # Start apps first to allow them to settle
 apps.each do |app|
-  puts "Starting: #{app[:uuid]}"
-  hook = File.join(hook_dir, 'start')
-  cmd = "#{hook} #{app[:name]} #{app[:namespace]} #{app[:uuid]}"
-  rc, out, err = systemu cmd
-  if rc != 0
-    $stderr.puts "ERROR: #{cmd} = #{rc} #{out} #{err}"
+  Process.fork do
+    puts "Starting: #{app[:uuid]}"
+    hook = File.join(hook_dir, 'start')
+    cmd = "#{hook} #{app[:name]} #{app[:namespace]} #{app[:uuid]}"
+    rc, out, err = systemu cmd
+    if rc != 0
+      $stderr.puts "ERROR: #{cmd} = #{rc} #{out} #{err}"
+    end
   end
+end
+
+begin
+  while true
+    Process.wait2
+  end
+rescue Errno::ECHILD
 end
 
 # Check apps
@@ -50,11 +59,20 @@ end
 
 # Finally, stop apps
 apps.each do |app|
-  puts "Stopping: #{app[:uuid]}"
-  hook = File.join(hook_dir, 'stop')
-  cmd = "#{hook} #{app[:name]} #{app[:namespace]} #{app[:uuid]}"
-  rc, out, err = systemu cmd
-  if rc != 0
-    $stderr.puts "ERROR: #{cmd} = #{rc} #{out} #{err}"
+  Process.fork do
+    puts "Stopping: #{app[:uuid]}"
+    hook = File.join(hook_dir, 'stop')
+    cmd = "#{hook} #{app[:name]} #{app[:namespace]} #{app[:uuid]}"
+    rc, out, err = systemu cmd
+    if rc != 0
+      $stderr.puts "ERROR: #{cmd} = #{rc} #{out} #{err}"
+    end
   end
+end
+
+begin
+  while true
+    Process.wait2
+  end
+rescue Errno::ECHILD
 end
