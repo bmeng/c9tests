@@ -52,7 +52,7 @@ collect_children
 apps_to_check = apps.clone
 50.times.each do
   apps_to_check.clone.each do |app|
-    puts "Checking: '#{app[:uuid]} -> #{app[:fqdn]}"
+    puts "Checking: #{app[:uuid]} -> #{app[:fqdn]}"
     uri = URI.parse("http://#{app[:fqdn]}/")
     Net::HTTP.start(uri.host, uri.port) do |http|
       request = Net::HTTP::Get.new uri.request_uri
