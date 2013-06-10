@@ -27,8 +27,8 @@ then
         ) || :
     done
 
-    # Backup Apache route files
-    ( cd /var/lib/openshift/.httpd.d; tar -czf /root/apache.routes.tgz *.json *.txt *.db )
+    # Backup existing files
+    ( cd /var/lib/openshift; tar -czf /var/lib/openshift.tgz ./ )
 
     # Disable quotas on /var
     quotaoff -ug /var
@@ -65,11 +65,9 @@ then
     tune2fs -o +nobarrier "$diskdevs"
     echo 'LABEL=openshift /var/lib/openshift ext4 defaults,usrjquota=aquota.user,jqfmt=vfsv0 1 1' >> /etc/fstab
     mount -a
-    mkdir -m 750 /var/lib/openshift/.httpd.d/
-    chown root:apache /var/lib/openshift/.httpd.d/
 
-    # Restore Apache route files
-    ( cd /var/lib/openshift/.httpd.d; tar -xzf /root/apache.routes.tgz )
+    # Restore OpenShift
+    ( cd /var/lib/openshift; tar -xzf /var/lib/openshift.tgz )
 
     setenforce 0
     quotacheck -cmuf /var/lib/openshift
