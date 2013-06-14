@@ -1,0 +1,9 @@
+pam_cgroup test
+=======
+
+These scripts create 100 gears at a time up to 4000 and benchmark
+creation speed.
+
+Between every 100 creates, the middle 100 gears on the node will be
+started and stopped.
+

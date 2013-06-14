@@ -1,0 +1,20 @@
+#!/usr/bin/env oo-ruby
+# -*- ruby -*-
+
+require 'rubygems'
+require 'openshift-origin-node'
+
+cpids = []
+
+OpenShift::ApplicationContainer.all.each do |container|
+  cpid = fork do
+    container.destroy
+  end
+  cpids << cpid
+  if cpids.length >= 5
+    Process.waitpid2(cpids.slice!(0))
+  end
+end
+cpids.each do |cpid|
+  Process.waitpid2(cpid)
+end

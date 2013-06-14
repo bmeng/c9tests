@@ -25,31 +25,18 @@ create
 check
 
 
+* __v1_cart__
+
+  V1 Cartridge API scripts.  Deprecated.
+
+* __pam_cgroup__
+
+  Scripts for testing the pam_cgroup performance
+
 * __prep__
 
   Prepare an EC2 m1.xlarge instance for 15k gear tests.  This
   procedure will render the node unusable for other types of testing.
-
-* __mkhosts__
-
-  Create entries in /etc/hosts for the gears.
-
-* __create__
-
-  Create 15k gears directly on the node without using the broker or
-  DNS.
-
-* __create-impl__
-
-  Called by create to do its work.
-
-* __check__
-
-  Start, test and stop the first and last 20 gears.
-
-* __check-impl__
-
-  Called by check to do its work.
 
 * __mkapp.sh__
 
