@@ -1,0 +1,115 @@
+#!/usr/bin/env oo-ruby
+# -*- ruby -*-
+
+require 'rubygems'
+require 'openshift-origin-node'
+require 'digest/md5'
+require 'etc'
+require_relative 'queue'
+
+@namespace = "test"
+@cart_name = "php-5.3"
+
+VALID_FUNCTIONS = %w(start stop restart create)
+DELETE_FUNCTIONS = %w(destroy delete)
+NUM_APPS = 100
+
+@num_apps = nil
+@command  = nil
+
+# Process args
+ARGV.each do |arg|
+  case (val = arg.strip)
+  when /^\d+/
+    @num_apps = Integer(val)
+  when "all"
+    @num_apps = :all
+  when *VALID_FUNCTIONS
+    @command = val.to_sym
+  when *DELETE_FUNCTIONS
+    @command = :destroy
+    @num_apps ||= :all
+  else 
+    abort "Invalid option"
+  end
+end
+
+def get_apps
+  # Get all of the apps to operate on
+  apps = OpenShift::ApplicationContainer.all.to_a
+
+  # Make sure the app is in the correct state for the operation
+  wanted_state = case @command
+                 when *[:start, :destroy]
+                   "stopped"
+                 when *[:stop, :restart]
+                   "started"
+                 else
+                   nil
+                 end
+
+  if wanted_state
+    apps = apps.select{|x| x.state.value == wanted_state }
+  end
+
+
+  if @num_apps == :all
+    @num_apps = apps.length
+  else
+    # Make sure to grab the middle apps
+    sp = [0, (apps.length-@num_apps)/2].max
+    apps = apps.slice(sp,@num_apps)
+  end
+
+  # Make sure we have enough apps
+
+  apps
+end
+
+def create_app(idx)
+  app_name = "test#{idx}"
+  app_uuid = Digest::MD5.hexdigest("#{app_name}-#{@namespace}")
+
+  container = OpenShift::ApplicationContainer.new(app_uuid, app_uuid, nil, app_name, app_name, @namespace, nil, nil, nil)
+  container.create
+  container.configure(@cart_name)
+  container.post_configure(@cart_name)
+  container.stop(@cart_name)
+end
+
+@num_apps ||= NUM_APPS
+
+apps = if @command == :create 
+         abort "Cannot use all with create" if @num_apps == :all
+         uids = []
+         Etc.passwd { |u| uids << u.uid }
+         max_uid = uids.max
+         (max_uid+1 .. max_uid+@num_apps).to_a
+       else
+         get_apps
+       end
+
+# Select the appropriate number of applications
+abort "No apps to operate on" if apps.empty?
+
+if apps.length < @num_apps
+  puts "Not enough apps in the desired state, running with what we've got"
+end
+
+Queue.run(5, max: apps.length) do |q|
+  apps.each_with_index do |container, i|
+    q.enqueue(@command.upcase) do
+      # TODO: Should restart be called by itself or as stop/start
+      case @command
+      when :create
+        create_app(i)
+      when :destroy
+        container.send(@command)
+      else
+        container.send(@command, @cart_name)
+      end
+    end
+  end
+end
+
+# vim: filetype=ruby
