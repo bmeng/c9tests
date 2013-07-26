@@ -7,6 +7,8 @@ require 'digest/md5'
 require 'etc'
 require_relative 'queue'
 
+@@impl = OpenShift::Runtime::ApplicationContainer
+
 @namespace = "test"
 @cart_name = "php-5.3"
 
@@ -36,7 +38,7 @@ end
 
 def get_apps
   # Get all of the apps to operate on
-  apps = OpenShift::ApplicationContainer.all.to_a
+  apps = @@impl.all.to_a
 
   # Make sure the app is in the correct state for the operation
   wanted_state = case @command
@@ -70,7 +72,7 @@ def create_app(idx)
   app_name = "test#{idx}"
   app_uuid = Digest::MD5.hexdigest("#{app_name}-#{@namespace}")
 
-  container = OpenShift::ApplicationContainer.new(app_uuid, app_uuid, nil, app_name, app_name, @namespace, nil, nil, nil)
+  container = @@impl.new(app_uuid, app_uuid, nil, app_name, app_name, @namespace, nil, nil, nil)
   container.create
   container.configure(@cart_name)
   container.post_configure(@cart_name)
