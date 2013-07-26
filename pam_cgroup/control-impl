@@ -99,12 +99,13 @@ if apps.length < @num_apps
 end
 
 Queue.run(5, max: apps.length) do |q|
-  apps.each_with_index do |container, i|
-    q.enqueue(@command.upcase) do
+  apps.each do |container|
+    q.enqueue do
       # TODO: Should restart be called by itself or as stop/start
       case @command
       when :create
-        create_app(i)
+        # With create, this is actually the next available uid
+        create_app(container)
       when :destroy
         container.send(@command)
       else
