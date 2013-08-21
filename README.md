@@ -63,6 +63,10 @@ check
 
   Driver script for above commands.  Do not call directly.
 
+* __queue.rb__
+
+  Queuing library for efficient task parallelization.
+
 * __v1_cart__
 
   V1 Cartridge API scripts.  Deprecated.
