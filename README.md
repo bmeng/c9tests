@@ -16,9 +16,12 @@ Due to the long run times, it is recommended to run these scripts in a
 screen session.
 
 Ex:
-- ./prep
-- ./create.sh 4000
-- ./restart
+
+./prep
+
+./create.sh 4000
+
+./restart
 
 
 
