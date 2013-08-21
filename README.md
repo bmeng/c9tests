@@ -25,14 +25,6 @@ create
 check
 
 
-* __v1_cart__
-
-  V1 Cartridge API scripts.  Deprecated.
-
-* __pam_cgroup__
-
-  Scripts for testing the pam_cgroup performance
-
 * __prep__
 
   Prepare an EC2 m1.xlarge instance for 15k gear tests.  This
@@ -45,3 +37,22 @@ check
 * __noapp.sh__
 
   Delete the test app for demo.
+
+* __create.sh__
+
+  Create 100 gears directly on the system (bypass broker and mcollective)
+
+* __delete.sh__
+
+  Delete all the gears on the node (bypass broker and mcollective).
+
+
+* __restart.sh__
+
+  Start and stop the middle 100 gears on the node.
+
+
+* __v1_cart__
+
+  V1 Cartridge API scripts.  Deprecated.
+
