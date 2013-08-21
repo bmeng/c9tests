@@ -97,6 +97,7 @@ echo "HOURS=66666" > /etc/charlie.conf
 # Need these for testing
 rpm -q setools-console || yum -y install setools-console
 rpm -q nc || yum -y install nc
+gem install ruby-progressbar
 
 # Remove expensive crontabs
 rm -f /etc/cron.*/openshift-origin-cron-*
