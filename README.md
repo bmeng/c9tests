@@ -6,23 +6,21 @@ C9 15k Gear Tests
 These tests are intended to minimally validate C9 configurations and
 may take a long time to run.
 
-A subset of the functionality to create 15k applications is being
-handled by the user story under test.  You should also conduct normal
-validation on a normal configuration to ensure the code works
-properly.
+The node may not be usable for other classes of testing after the prep
+script is run.
 
-An m1.xlarge or larger is required to run these tests.
+An m1.xlarge is recommended for creating thousands of gears.  Up to
+4000 may be done on an m1.large.
 
-This only smoke tests 15000 gear with the things we expect to work at
-that scale.  That does not currently include the broker or mcollective
-so they are turned off.  After prep.sh is run; the instance can no
-longer run other kinds of tests.
+Due to the long run times, it is recommended to run these scripts in a
+screen session.
 
-Example: Do the following and observe that no errors show up.
-prep
-mkhosts
-create
-check
+Ex:
+screen
+./prep
+./create.sh 4000
+./restart
+
 
 
 * __prep__
@@ -32,7 +30,9 @@ check
 
 * __create.sh__
 
-  Create 100 gears directly on the node (bypass broker and mcollective)
+  Create gears directly on the node (bypass broker and mcollective).
+  Specify number of gears to create on the command line (default:
+  100).
 
 * __delete.sh__
 
@@ -53,11 +53,6 @@ check
 * __control.sh__
 
   Call commands on the control script.
-
-* __doit.sh__
-
-  Run 40 batches of creating 100 apps, then restarting the middle 100
-  apps on the node.  Then delete them all.
 
 * __control-impl__
 
