@@ -30,27 +30,38 @@ check
   Prepare an EC2 m1.xlarge instance for 15k gear tests.  This
   procedure will render the node unusable for other types of testing.
 
-* __mkapp.sh__
-
-  Make a test app for demo.
-
-* __noapp.sh__
-
-  Delete the test app for demo.
-
 * __create.sh__
 
-  Create 100 gears directly on the system (bypass broker and mcollective)
+  Create 100 gears directly on the node (bypass broker and mcollective)
 
 * __delete.sh__
 
   Delete all the gears on the node (bypass broker and mcollective).
 
-
 * __restart.sh__
 
   Start and stop the middle 100 gears on the node.
 
+* __start.sh__
+
+  Start the middle 100 gears on the node.
+
+* __stop.sh__
+
+  Stop the middle 100 gears on the node.
+
+* __control.sh__
+
+  Call commands on the control script.
+
+* __doit.sh__
+
+  Run 40 batches of creating 100 apps, then restarting the middle 100
+  apps on the node.  Then delete them all.
+
+* __control-impl__
+
+  Driver script for above commands.  Do not call directly.
 
 * __v1_cart__
 

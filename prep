@@ -5,6 +5,11 @@
 # This script may be run multiple times, make it idempotent.
 #
 
+# Stop services using the old openshift dir
+service mcollective stop
+service httpd stop
+service openshift-node-web-proxy stop
+
 source /etc/openshift/node.conf
 
 # Switching to ephemeral storage for speed and space
@@ -106,20 +111,11 @@ service crond reload
 rm -f /etc/openshift/resource_limits.conf
 ln -sf resource_limits.conf.c9 /etc/openshift/resource_limits.conf
 
-# Disable unneeded services and restart ones we've reconfigured
-service rhc-broker stop ; chkconfig rhc-broker off
-service rhc-site stop ; chkconfig rhc-site off
-service mcollective stop ; chkconfig mcollective off
-service libra-watchman stop ; chkconfig libra-watchman off
-service activemq stop; chkconfig activemq off
-service mongod stop; chkconfig mongod off
-service jenkins stop; chkconfig jenkins off
-service oddjobd stop; chkconfig oddjobd off
-service mysqld stop; chkconfig mysqld off
-service cups stop; chkconfig cups off
-chkconfig openshift-gears off
-service openshift-cgroups restart
-service httpd restart
-service openshift-node-web-proxy restart
-service openshift-port-proxy restart
+# Restart services which were offline for prep
+service mcollective start
+service httpd start
+service openshift-node-web-proxy start
 
+
+# Disable services which are still too expensive for C9
+# service libra-watchman stop ; chkconfig libra-watchman off
