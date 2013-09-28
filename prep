@@ -6,7 +6,7 @@
 #
 
 # Stop services using the old openshift dir
-service mcollective stop
+service ruby193-mcollective stop
 service httpd stop
 service openshift-node-web-proxy stop
 
@@ -89,7 +89,7 @@ fi
 
 # We're creating thousands of directories already.
 sed -i -e 's|CREATE_APP_SYMLINKS=1|CREATE_APP_SYMLINKS=0|' /etc/openshift/node.conf
-sed -i -e 's|GEAR_MAX_UID=6500|GEAR_MAX_UID=262143|' /etc/openshift/node.conf
+sed -i -e 's|GEAR_MAX_UID=6999|GEAR_MAX_UID=262143|' /etc/openshift/node.conf
 
 # Keep the node alive for a long time
 echo "HOURS=66666" > /etc/charlie.conf
@@ -113,7 +113,7 @@ rm -f /etc/openshift/resource_limits.conf
 ln -sf resource_limits.conf.c9 /etc/openshift/resource_limits.conf
 
 # Restart services which were offline for prep
-service mcollective start
+service iruby193-mcollective start
 service httpd start
 service openshift-node-web-proxy start
 
