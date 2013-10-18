@@ -113,7 +113,7 @@ rm -f /etc/openshift/resource_limits.conf
 ln -sf resource_limits.conf.c9 /etc/openshift/resource_limits.conf
 
 # Restart services which were offline for prep
-service iruby193-mcollective start
+service ruby193-mcollective start
 service httpd start
 service openshift-node-web-proxy start
 
