@@ -9,6 +9,7 @@
 service ruby193-mcollective stop
 service httpd stop
 service openshift-node-web-proxy stop
+service rhc-broker stop
 
 source /etc/openshift/node.conf
 
@@ -119,4 +120,4 @@ service openshift-node-web-proxy start
 
 
 # Disable services which are still too expensive for C9
-# service libra-watchman stop ; chkconfig libra-watchman off
+service openshift-watchman stop ; chkconfig openshift-watchman off
