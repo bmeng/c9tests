@@ -17,21 +17,21 @@ source /etc/openshift/node.conf
 if [ `stat -f -c '%i' /var/lib/openshift` == `stat -f -c '%i' /var` ]
 then
     # We have gears? nuke them.  Allow this to fail.
-    grep ":${GEAR_GECOS}:" /etc/passwd | cut -f 1 -d : | while read gearn
-    do
-        ( 
-            for f in /var/lib/openshift/$gearn/.env/*; do
-                source $f
-            done
-            OPENSHIFT_APP_DOMAIN=`echo $OPENSHIFT_APP_DNS | cut -f 1 -d . | cut -f 2 -d -`
-            oo-app-destroy \
-                --with-container-uuid "$OPENSHIFT_GEAR_UUID" \
-                --with-container-name "$OPENSHIFT_GEAR_NAME" \
-                --with-app-uuid "$OPENSHIFT_APP_NAME" \
-                --with-app-name "$OPENSHIFT_APP_UUID" \
-                --with-namespace "$OPENSHIFT_APP_DOMAIN"
-        ) || :
-    done
+#    grep ":${GEAR_GECOS}:" /etc/passwd | cut -f 1 -d : | while read gearn
+#    do
+#        ( 
+#            for f in /var/lib/openshift/$gearn/.env/*; do
+#                source $f
+#            done
+#            OPENSHIFT_APP_DOMAIN=`echo $OPENSHIFT_APP_DNS | cut -f 1 -d . | cut -f 2 -d -`
+#            oo-app-destroy \
+#                --with-container-uuid "$OPENSHIFT_GEAR_UUID" \
+#                --with-container-name "$OPENSHIFT_GEAR_NAME" \
+#                --with-app-uuid "$OPENSHIFT_APP_NAME" \
+#                --with-app-name "$OPENSHIFT_APP_UUID" \
+#                --with-namespace "$OPENSHIFT_APP_DOMAIN"
+#        ) || :
+#    done
 
     # Backup existing files
     ( cd /var/lib/openshift; tar -czf /var/lib/openshift.tgz ./ )
